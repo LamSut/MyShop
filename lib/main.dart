@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = ColorScheme.fromSeed(
-      seedColor: Colors.purple,
+      seedColor: Colors.cyanAccent,
       secondary: Colors.deepOrange,
       surface: Colors.white,
       surfaceTint: Colors.grey[200],
@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
       // Set Homepage to ProductDetailScreen
       home: SafeArea(
         child: ProductDetailScreen(
-          ProductsManager().items[0],
+          ProductsManager().items[2],
         ),
       ),
     );

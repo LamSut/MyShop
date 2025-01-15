@@ -26,16 +26,28 @@ class ProductDetailScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            SizedBox(
-              height: 300,
-              width: double.infinity,
-              child: Image.network(product.imageUrl, fit: BoxFit.cover),
+            const SizedBox(height: 30),
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey, width: 1),
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(30),
+                child: Image.network(
+                  product.imageUrl,
+                  height: 300,
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
-            const SizedBox(height: 18),
+
+            const SizedBox(height: 20),
             Text(
               '\$${product.price}',
               style: const TextStyle(color: Colors.grey, fontSize: 20),
             ),
+
             const SizedBox(height: 10),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -47,21 +59,26 @@ class ProductDetailScreen extends StatelessWidget {
                 style: Theme.of(context).textTheme.titleLarge,
               ),
             ),
-            const SizedBox(height: 30),
+
             // Quantity & Size
+            const SizedBox(height: 30),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+                      const EdgeInsets.symmetric(vertical: 4, horizontal: 14),
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey, width: 1),
                     borderRadius: BorderRadius.circular(30),
                   ),
                   child: Row(
                     children: [
-                      const Text("Size:   "),
+                      const Text(
+                        "Size: ",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      const SizedBox(width: 6),
                       DropdownButton<String>(
                         value: 'L', // Default
                         items: const [
@@ -77,8 +94,9 @@ class ProductDetailScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(width: 10),
+
                 // Quantity
+                const SizedBox(width: 10),
                 Container(
                   padding:
                       const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
@@ -88,7 +106,10 @@ class ProductDetailScreen extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      const Text("Quantity: "),
+                      const Text(
+                        "Quantity: ",
+                        style: TextStyle(fontSize: 16),
+                      ),
                       IconButton(
                         icon: const Icon(Icons.remove),
                         onPressed: () {
@@ -107,17 +128,24 @@ class ProductDetailScreen extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+
             // Add to Cart
+            const SizedBox(height: 20),
             ElevatedButton.icon(
               onPressed: () {
                 print("Add to Cart");
               },
               icon: const Icon(Icons.shopping_cart),
-              label: const Text("Add to Cart"),
+              label: const Text(
+                "Add to Cart",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               style: ElevatedButton.styleFrom(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                    const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
               ),
             ),
             const SizedBox(height: 20),
