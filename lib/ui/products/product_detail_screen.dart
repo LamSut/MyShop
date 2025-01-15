@@ -1,23 +1,38 @@
 import 'package:flutter/material.dart';
 import '../../models/product.dart';
 
-class ProductDetailScreen extends StatelessWidget {
+class ProductDetailScreen extends StatefulWidget {
   const ProductDetailScreen(this.product, {super.key});
 
   final Product product;
+
+  @override
+  State<ProductDetailScreen> createState() => _ProductDetailScreenState();
+}
+
+class _ProductDetailScreenState extends State<ProductDetailScreen> {
+  bool isInWishlist = false; // Wishlist State
+  String selectedSize = 'L'; // Size State
+  int quantity = 0; // Quantity State
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       // Top Bar
       appBar: AppBar(
-        title: Text(product.title),
+        title: Text(widget.product.title),
         // Wishlist
         actions: [
           IconButton(
-            icon: const Icon(Icons.favorite_border),
+            icon: Icon(
+              isInWishlist ? Icons.favorite : Icons.favorite_border,
+              color:
+                  isInWishlist ? Theme.of(context).colorScheme.secondary : null,
+            ),
             onPressed: () {
-              print("Add to Wishlist");
+              setState(() {
+                isInWishlist = !isInWishlist;
+              });
             },
           ),
         ],
@@ -35,31 +50,28 @@ class ProductDetailScreen extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(30),
                 child: Image.network(
-                  product.imageUrl,
+                  widget.product.imageUrl,
                   height: 300,
                   fit: BoxFit.cover,
                 ),
               ),
             ),
-
             const SizedBox(height: 20),
             Text(
-              '\$${product.price}',
+              '\$${widget.product.price}',
               style: const TextStyle(color: Colors.grey, fontSize: 20),
             ),
-
             const SizedBox(height: 10),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               width: double.infinity,
               child: Text(
-                product.description,
+                widget.product.description,
                 textAlign: TextAlign.center,
                 softWrap: true,
                 style: Theme.of(context).textTheme.titleLarge,
               ),
             ),
-
             // Quantity & Size
             const SizedBox(height: 30),
             Row(
@@ -80,7 +92,7 @@ class ProductDetailScreen extends StatelessWidget {
                       ),
                       const SizedBox(width: 6),
                       DropdownButton<String>(
-                        value: 'L', // Default
+                        value: selectedSize,
                         items: const [
                           DropdownMenuItem(value: 'S', child: Text('S')),
                           DropdownMenuItem(value: 'M', child: Text('M')),
@@ -88,7 +100,9 @@ class ProductDetailScreen extends StatelessWidget {
                           DropdownMenuItem(value: 'XL', child: Text('XL')),
                         ],
                         onChanged: (String? newValue) {
-                          print("Selected Size: $newValue");
+                          setState(() {
+                            selectedSize = newValue!;
+                          });
                         },
                       ),
                     ],
@@ -113,14 +127,20 @@ class ProductDetailScreen extends StatelessWidget {
                       IconButton(
                         icon: const Icon(Icons.remove),
                         onPressed: () {
-                          print("Reduce quantity");
+                          setState(() {
+                            if (quantity > 0) {
+                              quantity--;
+                            }
+                          });
                         },
                       ),
-                      const Text('0'),
+                      Text('$quantity'),
                       IconButton(
                         icon: const Icon(Icons.add),
                         onPressed: () {
-                          print("Increase quantity");
+                          setState(() {
+                            quantity++;
+                          });
                         },
                       ),
                     ],
@@ -128,24 +148,28 @@ class ProductDetailScreen extends StatelessWidget {
                 ),
               ],
             ),
-
             // Add to Cart
             const SizedBox(height: 20),
             ElevatedButton.icon(
               onPressed: () {
                 print("Add to Cart");
               },
-              icon: const Icon(Icons.shopping_cart),
-              label: const Text(
+              icon: Icon(
+                Icons.shopping_cart,
+                size: 30,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+              label: Text(
                 "Add to Cart",
                 style: TextStyle(
+                  color: Theme.of(context).colorScheme.secondary,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               style: ElevatedButton.styleFrom(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
               ),
             ),
             const SizedBox(height: 20),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'ui/products/products_manager.dart';
-import 'ui/products/product_detail_screen.dart';
-// import 'ui/products/products_overview_screen.dart';
+// import 'ui/products/products_manager.dart';
+// import 'ui/products/product_detail_screen.dart';
+import 'ui/products/products_overview_screen.dart';
 // import 'ui/products/user_products_screen.dart';
 
 void main() {
@@ -14,8 +14,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = ColorScheme.fromSeed(
-      seedColor: Colors.cyanAccent,
-      secondary: Colors.deepOrange,
+      seedColor: Color.fromARGB(255, 0, 120, 140),
+      secondary: Color.fromARGB(255, 255, 100, 140),
       surface: Colors.white,
       surfaceTint: Colors.grey[200],
     );
@@ -35,9 +35,7 @@ class MyApp extends StatelessWidget {
       ),
       // Set Homepage to ProductDetailScreen
       home: SafeArea(
-        child: ProductDetailScreen(
-          ProductsManager().items[2],
-        ),
+        child: ProductsOverviewScreen(),
       ),
     );
   }
