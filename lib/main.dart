@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-// import 'ui/products/products_manager.dart';
-// import 'ui/products/product_detail_screen.dart';
 import 'ui/products/products_overview_screen.dart';
-// import 'ui/products/user_products_screen.dart';
+import 'ui/cart/cart_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,22 +18,34 @@ class MyApp extends StatelessWidget {
       surfaceTint: Colors.grey[200],
     );
 
+    final themeData = ThemeData(
+      fontFamily: 'Lato',
+      colorScheme: colorScheme,
+      appBarTheme: AppBarTheme(
+        backgroundColor: colorScheme.primary,
+        foregroundColor: colorScheme.onPrimary,
+        shadowColor: colorScheme.shadow,
+        elevation: 4,
+      ),
+      dialogTheme: DialogTheme(
+        titleTextStyle: TextStyle(
+          color: colorScheme.onSurface,
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+        ),
+        contentTextStyle: TextStyle(
+          color: colorScheme.onSurface,
+          fontSize: 20,
+        ),
+      ),
+    );
+
     return MaterialApp(
       title: 'MyShop',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        fontFamily: 'Lato',
-        colorScheme: colorScheme,
-        appBarTheme: AppBarTheme(
-          backgroundColor: colorScheme.primary,
-          foregroundColor: colorScheme.onPrimary,
-          shadowColor: colorScheme.shadow,
-          elevation: 4,
-        ),
-      ),
-      // Set Homepage to ProductDetailScreen
+      theme: themeData,
       home: SafeArea(
-        child: ProductsOverviewScreen(),
+        child: CartScreen(),
       ),
     );
   }
