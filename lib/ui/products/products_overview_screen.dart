@@ -78,13 +78,16 @@ class ProductFilterMenu extends StatelessWidget {
 
 class ShoppingCartButton extends StatelessWidget {
   const ShoppingCartButton({super.key, this.onPressed});
-
   final void Function()? onPressed;
-
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      icon: const Icon(Icons.shopping_cart),
+      icon: Badge.count(
+        count: CartManager().productCount,
+        child: const Icon(
+          Icons.shopping_cart,
+        ),
+      ),
       onPressed: onPressed,
     );
   }
