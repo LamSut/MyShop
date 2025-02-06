@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import '../screens.dart';
 import 'products_grid.dart';
+import '../shared/app_drawer.dart';
 
 enum FilterOptions { favorites, all }
 
@@ -29,11 +31,14 @@ class ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
           ),
           ShoppingCartButton(
             onPressed: () {
-              print('Go to cart screen');
+              // Go to CartScreen
+              Navigator.of(context).pushNamed(CartScreen.routeName);
             },
           ),
         ],
       ),
+      // Add Drawer
+      drawer: const AppDrawer(),
       body: ProductsGrid(
         _currentFilter == FilterOptions.favorites,
       ),

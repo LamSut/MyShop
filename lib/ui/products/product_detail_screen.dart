@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../models/product.dart';
 
 class ProductDetailScreen extends StatefulWidget {
+  static const routeName = '/product_detail';
   const ProductDetailScreen(this.product, {super.key});
 
   final Product product;

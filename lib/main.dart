@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'ui/products/products_overview_screen.dart';
-import 'ui/cart/cart_screen.dart';
-import 'ui/orders/orders_screen.dart';
+import 'ui/screens.dart';
 
 void main() {
   runApp(const MyApp());
@@ -45,9 +43,39 @@ class MyApp extends StatelessWidget {
       title: 'MyShop',
       debugShowCheckedModeBanner: false,
       theme: themeData,
-      home: SafeArea(
-        child: OrdersScreen(),
-      ),
+      home: const ProductsOverviewScreen(),
+      // Routes parameters are often used to declare
+// routes without parameters.
+      routes: {
+        CartScreen.routeName: (ctx) => const SafeArea(
+              child: CartScreen(),
+            ),
+        OrdersScreen.routeName: (ctx) => const SafeArea(
+              child: OrdersScreen(),
+            ),
+        UserProductsScreen.routeName: (ctx) => const SafeArea(
+              child: UserProductsScreen(),
+            ),
+      },
+      // onGenerateRoute will be called when the requested route is not found
+      // in the routes parameter above. Usually used to pass parameters
+      // or customize the transition effect.
+      onGenerateRoute: (settings) {
+        if (settings.name == ProductDetailScreen.routeName) {
+          final productId = settings.arguments as String;
+          return MaterialPageRoute(
+            settings: settings,
+            builder: (ctx) {
+              return SafeArea(
+                child: ProductDetailScreen(
+                  ProductsManager().findById(productId)!,
+                ),
+              );
+            },
+          );
+        }
+        return null;
+      },
     );
   }
 }
