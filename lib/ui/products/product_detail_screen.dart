@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/product.dart';
 import '../cart/cart_screen.dart';
+import '../shared/icon_utils.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   static const routeName = '/product_detail';
@@ -32,9 +33,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             },
           ),
           // Navigate to Cart (CartScreen)
-          IconButton(
-            icon: const Icon(Icons.shopping_cart),
+          ShoppingCartButton(
             onPressed: () {
+              // Go to CartScreen
               Navigator.of(context).pushNamed(CartScreen.routeName);
             },
           ),

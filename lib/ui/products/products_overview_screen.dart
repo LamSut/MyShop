@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import '../screens.dart';
 import 'products_grid.dart';
 import '../shared/app_drawer.dart';
+import '../shared/icon_utils.dart';
 
 enum FilterOptions { favorites, all }
 
 class ProductsOverviewScreen extends StatefulWidget {
   const ProductsOverviewScreen({super.key});
-
   @override
   State<ProductsOverviewScreen> createState() => ProductsOverviewScreenState();
 }
@@ -72,23 +72,6 @@ class ProductFilterMenu extends StatelessWidget {
           child: Text('Show All'),
         ),
       ],
-    );
-  }
-}
-
-class ShoppingCartButton extends StatelessWidget {
-  const ShoppingCartButton({super.key, this.onPressed});
-  final void Function()? onPressed;
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      icon: Badge.count(
-        count: CartManager().productCount,
-        child: const Icon(
-          Icons.shopping_cart,
-        ),
-      ),
-      onPressed: onPressed,
     );
   }
 }
