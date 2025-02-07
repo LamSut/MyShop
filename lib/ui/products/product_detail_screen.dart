@@ -28,7 +28,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             // Navigate to Home (ProductsOverviewScreen)
             icon: const Icon(Icons.home),
             onPressed: () {
-              Navigator.of(context).pushReplacementNamed('/');
+              Navigator.of(context).pop();
             },
           ),
           // Navigate to Cart (CartScreen)

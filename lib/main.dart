@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'ui/screens.dart';
+import 'ui/shared/navigation_utils.dart';
 
 void main() {
   runApp(const MyApp());
@@ -44,37 +45,35 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: themeData,
       home: const ProductsOverviewScreen(),
-      // Routes parameters are often used to declare
-// routes without parameters.
-      routes: {
-        CartScreen.routeName: (ctx) => const SafeArea(
-              child: CartScreen(),
-            ),
-        OrdersScreen.routeName: (ctx) => const SafeArea(
-              child: OrdersScreen(),
-            ),
-        UserProductsScreen.routeName: (ctx) => const SafeArea(
-              child: UserProductsScreen(),
-            ),
-      },
+      // Routes parameters are often used to declare routes without parameters.
       // onGenerateRoute will be called when the requested route is not found
       // in the routes parameter above. Usually used to pass parameters
       // or customize the transition effect.
       onGenerateRoute: (settings) {
-        if (settings.name == ProductDetailScreen.routeName) {
-          final productId = settings.arguments as String;
-          return MaterialPageRoute(
-            settings: settings,
-            builder: (ctx) {
-              return SafeArea(
-                child: ProductDetailScreen(
-                  ProductsManager().findById(productId)!,
-                ),
-              );
-            },
-          );
+        Widget page;
+
+        switch (settings.name) {
+          case CartScreen.routeName:
+            page = const SafeArea(child: CartScreen());
+            break;
+          case OrdersScreen.routeName:
+            page = const SafeArea(child: OrdersScreen());
+            break;
+          case UserProductsScreen.routeName:
+            page = const SafeArea(child: UserProductsScreen());
+            break;
+          case ProductDetailScreen.routeName:
+            final productId = settings.arguments as String;
+            page = SafeArea(
+              child:
+                  ProductDetailScreen(ProductsManager().findById(productId)!),
+            );
+            break;
+          default:
+            return null;
         }
-        return null;
+
+        return createRoute(page); // Apply slide transition
       },
     );
   }
