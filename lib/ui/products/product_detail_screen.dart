@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/product.dart';
+import '../cart/cart_screen.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   static const routeName = '/product_detail';
@@ -22,8 +23,22 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       // Top Bar
       appBar: AppBar(
         title: Text(widget.product.title),
-        // Wishlist
         actions: [
+          IconButton(
+            // Navigate to Home (ProductsOverviewScreen)
+            icon: const Icon(Icons.home),
+            onPressed: () {
+              Navigator.of(context).pushReplacementNamed('/');
+            },
+          ),
+          // Navigate to Cart (CartScreen)
+          IconButton(
+            icon: const Icon(Icons.shopping_cart),
+            onPressed: () {
+              Navigator.of(context).pushNamed(CartScreen.routeName);
+            },
+          ),
+          // Wishlist Toggle
           IconButton(
             icon: Icon(
               isInWishlist ? Icons.favorite : Icons.favorite_border,
@@ -78,6 +93,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                // Size Selector
                 Container(
                   padding:
                       const EdgeInsets.symmetric(vertical: 4, horizontal: 14),
@@ -109,9 +125,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     ],
                   ),
                 ),
-
-                // Quantity
                 const SizedBox(width: 10),
+                // Quantity Selector
                 Container(
                   padding:
                       const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
@@ -149,8 +164,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 ),
               ],
             ),
-            // Add to Cart
             const SizedBox(height: 20),
+            // Add to Cart Button
             ElevatedButton.icon(
               onPressed: () {
                 print("Add to Cart");
