@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../models/product.dart';
 import 'product_detail_screen.dart';
 import 'products_manager.dart';
+import '../cart/cart_manager.dart';
 
 class ProductGridTile extends StatelessWidget {
   const ProductGridTile(
@@ -28,7 +29,26 @@ class ProductGridTile extends StatelessWidget {
                 );
           },
           onAddToCartPressed: () {
-            print('Add item to cart');
+            // Get the CartManager object using context.read
+            final cart = context.read<CartManager>();
+            cart.addItem(product);
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                SnackBar(
+                  content: const Text(
+                    'Item added to cart',
+                  ),
+                  duration: const Duration(seconds: 2),
+                  action: SnackBarAction(
+                    label: 'UNDO',
+                    onPressed: () {
+                      // Delete product if undo
+                      cart.removeItem(product.id!);
+                    },
+                  ),
+                ),
+              );
           },
         ),
         child: GestureDetector(
