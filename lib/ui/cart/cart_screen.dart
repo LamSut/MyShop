@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../orders/orders_manager.dart';
 import 'cart_manager.dart';
 import 'cart_item_card.dart';
 
 class CartScreen extends StatelessWidget {
   static const routeName = '/cart';
   const CartScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
-    // context.watch has the same function as the Consumer widget
     final cart = context.watch<CartManager>();
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Your Cart'),
@@ -20,14 +18,28 @@ class CartScreen extends StatelessWidget {
       body: Column(
         children: <Widget>[
           CartSummary(
-              cart: cart,
-              onOrderNowPressed: () {
-                print('An order has been added');
-              }),
-          const SizedBox(height: 18),
+            cart: cart,
+            // Handle Order Now event
+            onOrderNowPressed: cart.totalAmount <= 0
+                ? null
+                : () {
+                    context.read<OrdersManager>().addOrder(
+                          cart.products,
+                          cart.totalAmount,
+                        );
+                    cart.clearAllItems();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Ordered successfully!'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  },
+          ),
+          const SizedBox(height: 10),
           Expanded(
             child: CartItemList(cart),
-          ),
+          )
         ],
       ),
     );

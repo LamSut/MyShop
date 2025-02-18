@@ -43,8 +43,13 @@ class ProductGridTile extends StatelessWidget {
                   action: SnackBarAction(
                     label: 'UNDO',
                     onPressed: () {
-                      // Delete product if undo
                       cart.removeItem(product.id!);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Undo the previously added action'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
                     },
                   ),
                 ),
