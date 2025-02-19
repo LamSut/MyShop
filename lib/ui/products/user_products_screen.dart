@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'edit_product_screen.dart';
 import 'user_product_list_tile.dart';
 import 'products_manager.dart';
 import '../shared/app_drawer.dart';
@@ -14,10 +15,12 @@ class UserProductsScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Your Products'),
         actions: <Widget>[
-          // Add Product
           AddUserProductButton(
             onPressed: () {
-              print('Go to edit product screen');
+              // Navigate to EditProductScreen
+              Navigator.of(context).pushNamed(
+                EditProductScreen.routeName,
+              );
             },
           ),
         ],

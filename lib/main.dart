@@ -40,53 +40,63 @@ class MyApp extends StatelessWidget {
         ),
       ),
     );
-    return MultiProvider(
-        providers: [
-          ChangeNotifierProvider(
-            create: (ctx) => ProductsManager(),
-          ),
-          ChangeNotifierProvider(
-            create: (ctx) => CartManager(),
-          ),
-          ChangeNotifierProvider(
-            create: (ctx) => OrdersManager(),
-          ),
-        ],
-        child: MaterialApp(
-            title: 'MyShop',
-            debugShowCheckedModeBanner: false,
-            theme: themeData,
-            home: const ProductsOverviewScreen(),
-            // Routes parameters are often used to declare routes without parameters.
-            // onGenerateRoute will be called when the requested route is not found
-            // in the routes parameter above. Usually used to pass parameters
-            // or customize the transition effect.
-            onGenerateRoute: (settings) {
-              Widget page;
 
-              switch (settings.name) {
-                case CartScreen.routeName:
-                  page = const SafeArea(child: CartScreen());
-                  break;
-                case OrdersScreen.routeName:
-                  page = const SafeArea(child: OrdersScreen());
-                  break;
-                case UserProductsScreen.routeName:
-                  page = const SafeArea(child: UserProductsScreen());
-                  break;
-                case ProductDetailScreen.routeName:
-                  final productId = settings.arguments as String;
-                  return MaterialPageRoute(
-                    builder: (ctx) => SafeArea(
-                      child: ProductDetailScreen(
-                        ctx.read<ProductsManager>().findById(productId)!,
-                      ),
-                    ),
-                  );
-                default:
-                  return null;
-              }
-              return createRoute(page); // Apply slide transition
-            }));
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (ctx) => ProductsManager(),
+        ),
+        ChangeNotifierProvider(
+          create: (ctx) => CartManager(),
+        ),
+        ChangeNotifierProvider(
+          create: (ctx) => OrdersManager(),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'MyShop',
+        debugShowCheckedModeBanner: false,
+        theme: themeData,
+        home: const ProductsOverviewScreen(),
+        onGenerateRoute: (settings) {
+          Widget page;
+
+          switch (settings.name) {
+            case CartScreen.routeName:
+              page = const SafeArea(child: CartScreen());
+              break;
+            case OrdersScreen.routeName:
+              page = const SafeArea(child: OrdersScreen());
+              break;
+            case UserProductsScreen.routeName:
+              page = const SafeArea(child: UserProductsScreen());
+              break;
+            case ProductDetailScreen.routeName:
+              final productId = settings.arguments as String;
+              return MaterialPageRoute(
+                builder: (ctx) => SafeArea(
+                  child: ProductDetailScreen(
+                    ctx.read<ProductsManager>().findById(productId)!,
+                  ),
+                ),
+              );
+            case EditProductScreen.routeName:
+              final productId = settings.arguments as String?;
+              return MaterialPageRoute(
+                builder: (ctx) => SafeArea(
+                  child: EditProductScreen(
+                    productId != null
+                        ? ctx.read<ProductsManager>().findById(productId)
+                        : null,
+                  ),
+                ),
+              );
+            default:
+              return null;
+          }
+          return createRoute(page); // Apply slide transition
+        },
+      ),
+    );
   }
 }
