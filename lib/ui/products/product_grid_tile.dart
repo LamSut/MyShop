@@ -31,7 +31,7 @@ class ProductGridTile extends StatelessWidget {
           onAddToCartPressed: () {
             // Get the CartManager object using context.read
             final cart = context.read<CartManager>();
-            cart.addItem(product);
+            cart.addItem(product, 1);
             ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()
               ..showSnackBar(
@@ -43,7 +43,7 @@ class ProductGridTile extends StatelessWidget {
                   action: SnackBarAction(
                     label: 'UNDO',
                     onPressed: () {
-                      cart.removeItem(product.id!);
+                      cart.removeItem(product.id!, 1);
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('Undo the previously added action'),

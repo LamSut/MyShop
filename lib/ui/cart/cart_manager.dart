@@ -34,12 +34,12 @@ class CartManager with ChangeNotifier {
     return total;
   }
 
-  void addItem(Product product) {
+  void addItem(Product product, int quantity) {
     if (_items.containsKey(product.id)) {
       _items.update(
         product.id!,
         (existingCartItem) => existingCartItem.copyWith(
-          quantity: existingCartItem.quantity + 1,
+          quantity: existingCartItem.quantity + quantity,
         ),
       );
     } else {
@@ -50,22 +50,21 @@ class CartManager with ChangeNotifier {
           title: product.title,
           imageUrl: product.imageUrl,
           price: product.price,
-          quantity: 1,
+          quantity: quantity,
         ),
       );
     }
     notifyListeners();
   }
 
-  void removeItem(String productId) {
-    if (!_items.containsKey(productId)) {
-      return;
-    }
-    if (_items[productId]?.quantity as num > 1) {
+  void removeItem(String productId, int quantity) {
+    if (!_items.containsKey(productId)) return;
+
+    if (_items[productId]?.quantity as num > quantity) {
       _items.update(
         productId,
         (existingCartItem) => existingCartItem.copyWith(
-          quantity: existingCartItem.quantity - 1,
+          quantity: existingCartItem.quantity - quantity,
         ),
       );
     } else {

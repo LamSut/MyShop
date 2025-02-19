@@ -13,8 +13,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = ColorScheme.fromSeed(
-      seedColor: Color.fromARGB(255, 0, 120, 140),
-      secondary: Color.fromARGB(255, 255, 100, 140),
+      seedColor: Color.fromARGB(255, 0, 80, 100),
+      secondary: Color.fromARGB(255, 240, 120, 150),
       surface: Colors.white,
       surfaceTint: Colors.grey[200],
     );

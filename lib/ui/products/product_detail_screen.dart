@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../models/product.dart';
 import '../cart/cart_screen.dart';
 import '../shared/icon_utils.dart';
+import '../cart/cart_manager.dart';
+import 'products_manager.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   static const routeName = '/product_detail';
@@ -14,47 +17,76 @@ class ProductDetailScreen extends StatefulWidget {
 }
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
-  bool isInWishlist = false; // Wishlist State
-  String selectedSize = 'L'; // Size State
-  int quantity = 0; // Quantity State
+  bool isInWishlist = false;
+  String selectedSize = 'L';
+  int quantity = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    isInWishlist = widget.product.isFavorite;
+  }
+
+  void _toggleFavorite() {
+    setState(() {
+      isInWishlist = !isInWishlist;
+    });
+    context.read<ProductsManager>().updateProduct(
+          widget.product.copyWith(isFavorite: isInWishlist),
+        );
+  }
+
+  void _addToCart() {
+    if (quantity > 0) {
+      final cart = context.read<CartManager>();
+      cart.addItem(widget.product, quantity);
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text('Added $quantity ${widget.product.title} to cart'),
+            duration: const Duration(seconds: 2),
+            action: SnackBarAction(
+              label: 'UNDO',
+              onPressed: () {
+                cart.removeItem(widget.product.id!, quantity);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Undo the previously added action'),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Top Bar
       appBar: AppBar(
         title: Text(widget.product.title),
         actions: [
           IconButton(
-            // Navigate to Home (ProductsOverviewScreen)
             icon: const Icon(Icons.home),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
+            onPressed: () => Navigator.of(context).pop(),
           ),
-          // Navigate to Cart (CartScreen)
           ShoppingCartButton(
-            onPressed: () {
-              // Go to CartScreen
-              Navigator.of(context).pushNamed(CartScreen.routeName);
-            },
+            onPressed: () =>
+                Navigator.of(context).pushNamed(CartScreen.routeName),
           ),
-          // Wishlist Toggle
           IconButton(
             icon: Icon(
               isInWishlist ? Icons.favorite : Icons.favorite_border,
               color:
                   isInWishlist ? Theme.of(context).colorScheme.secondary : null,
             ),
-            onPressed: () {
-              setState(() {
-                isInWishlist = !isInWishlist;
-              });
-            },
+            onPressed: _toggleFavorite,
           ),
         ],
       ),
-      // Body
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
@@ -89,12 +121,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 style: Theme.of(context).textTheme.titleLarge,
               ),
             ),
-            // Quantity & Size
             const SizedBox(height: 30),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Size Selector
                 Container(
                   padding:
                       const EdgeInsets.symmetric(vertical: 4, horizontal: 14),
@@ -104,10 +134,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   ),
                   child: Row(
                     children: [
-                      const Text(
-                        "Size: ",
-                        style: TextStyle(fontSize: 16),
-                      ),
+                      const Text("Size: ", style: TextStyle(fontSize: 16)),
                       const SizedBox(width: 6),
                       DropdownButton<String>(
                         value: selectedSize,
@@ -127,7 +154,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   ),
                 ),
                 const SizedBox(width: 10),
-                // Quantity Selector
                 Container(
                   padding:
                       const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
@@ -137,17 +163,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   ),
                   child: Row(
                     children: [
-                      const Text(
-                        "Quantity: ",
-                        style: TextStyle(fontSize: 16),
-                      ),
+                      const Text("Quantity: ", style: TextStyle(fontSize: 16)),
                       IconButton(
                         icon: const Icon(Icons.remove),
                         onPressed: () {
                           setState(() {
-                            if (quantity > 0) {
-                              quantity--;
-                            }
+                            if (quantity > 1) quantity--;
                           });
                         },
                       ),
@@ -166,24 +187,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               ],
             ),
             const SizedBox(height: 20),
-            // Add to Cart Button
             ElevatedButton.icon(
-              onPressed: () {
-                print("Add to Cart");
-              },
-              icon: Icon(
-                Icons.shopping_cart,
-                size: 30,
-                color: Theme.of(context).colorScheme.secondary,
-              ),
-              label: Text(
-                "Add to Cart",
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.secondary,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              onPressed: _addToCart,
+              icon: Icon(Icons.shopping_cart,
+                  size: 30, color: Theme.of(context).colorScheme.secondary),
+              label: Text("Add to Cart",
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.secondary)),
               style: ElevatedButton.styleFrom(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
