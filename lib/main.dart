@@ -4,7 +4,16 @@ import 'ui/screens.dart';
 import 'ui/shared/navigation_utils.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (ctx) => ProductsManager()),
+        ChangeNotifierProvider(create: (ctx) => CartManager()),
+        ChangeNotifierProvider(create: (ctx) => OrdersManager()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -41,62 +50,51 @@ class MyApp extends StatelessWidget {
       ),
     );
 
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (ctx) => ProductsManager(),
-        ),
-        ChangeNotifierProvider(
-          create: (ctx) => CartManager(),
-        ),
-        ChangeNotifierProvider(
-          create: (ctx) => OrdersManager(),
-        ),
-      ],
-      child: MaterialApp(
-        title: 'MyShop',
-        debugShowCheckedModeBanner: false,
-        theme: themeData,
-        home: const ProductsOverviewScreen(),
-        onGenerateRoute: (settings) {
-          Widget page;
+    return MaterialApp(
+      title: 'MyShop',
+      debugShowCheckedModeBanner: false,
+      theme: themeData,
+      home: const ProductsOverviewScreen(),
+      onGenerateRoute: (settings) {
+        Widget page;
 
-          switch (settings.name) {
-            case CartScreen.routeName:
-              page = const SafeArea(child: CartScreen());
-              break;
-            case OrdersScreen.routeName:
-              page = const SafeArea(child: OrdersScreen());
-              break;
-            case UserProductsScreen.routeName:
-              page = const SafeArea(child: UserProductsScreen());
-              break;
-            case ProductDetailScreen.routeName:
-              final productId = settings.arguments as String;
-              return MaterialPageRoute(
-                builder: (ctx) => SafeArea(
-                  child: ProductDetailScreen(
-                    ctx.read<ProductsManager>().findById(productId)!,
-                  ),
+        switch (settings.name) {
+          case CartScreen.routeName:
+            page = const SafeArea(child: CartScreen());
+            break;
+          case OrdersScreen.routeName:
+            page = const SafeArea(child: OrdersScreen());
+            break;
+          case UserProductsScreen.routeName:
+            page = const SafeArea(child: UserProductsScreen());
+            break;
+          case ProductDetailScreen.routeName:
+            final productId = settings.arguments as String;
+            page = SafeArea(
+              child: Consumer<ProductsManager>(
+                builder: (context, productsManager, _) => ProductDetailScreen(
+                  productsManager.findById(productId)!,
                 ),
-              );
-            case EditProductScreen.routeName:
-              final productId = settings.arguments as String?;
-              return MaterialPageRoute(
-                builder: (ctx) => SafeArea(
-                  child: EditProductScreen(
-                    productId != null
-                        ? ctx.read<ProductsManager>().findById(productId)
-                        : null,
-                  ),
+              ),
+            );
+            return createRoute(page);
+          case EditProductScreen.routeName:
+            final productId = settings.arguments as String?;
+            page = SafeArea(
+              child: Consumer<ProductsManager>(
+                builder: (context, productsManager, _) => EditProductScreen(
+                  productId != null
+                      ? productsManager.findById(productId)
+                      : null,
                 ),
-              );
-            default:
-              return null;
-          }
-          return createRoute(page); // Apply slide transition
-        },
-      ),
+              ),
+            );
+            return createRoute(page);
+          default:
+            return null;
+        }
+        return createRoute(page); // Apply slide transition
+      },
     );
   }
 }
