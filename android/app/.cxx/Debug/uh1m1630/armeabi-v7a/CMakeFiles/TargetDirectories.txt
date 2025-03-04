@@ -1,2 +1,0 @@
-F:/Dai-Hoc/4-hk2/PT-Ung-Dung-Di-Dong/Lab/labs-myshop-LamSut/android/app/.cxx/Debug/uh1m1630/armeabi-v7a/CMakeFiles/edit_cache.dir
-F:/Dai-Hoc/4-hk2/PT-Ung-Dung-Di-Dong/Lab/labs-myshop-LamSut/android/app/.cxx/Debug/uh1m1630/armeabi-v7a/CMakeFiles/rebuild_cache.dir
