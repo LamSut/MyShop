@@ -10,6 +10,7 @@ void main() {
         ChangeNotifierProvider(create: (ctx) => ProductsManager()),
         ChangeNotifierProvider(create: (ctx) => CartManager()),
         ChangeNotifierProvider(create: (ctx) => OrdersManager()),
+        ChangeNotifierProvider(create: (ctx) => AuthManager()),
       ],
       child: const MyApp(),
     ),
@@ -22,8 +23,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = ColorScheme.fromSeed(
-      seedColor: Color.fromARGB(255, 0, 80, 100),
-      secondary: Color.fromARGB(255, 240, 120, 150),
+      seedColor: const Color.fromARGB(255, 0, 80, 100),
+      secondary: const Color.fromARGB(255, 240, 120, 150),
       surface: Colors.white,
       surfaceTint: Colors.grey[200],
     );
@@ -50,50 +51,64 @@ class MyApp extends StatelessWidget {
       ),
     );
 
-    return MaterialApp(
-      title: 'MyShop',
-      debugShowCheckedModeBanner: false,
-      theme: themeData,
-      home: const ProductsOverviewScreen(),
-      onGenerateRoute: (settings) {
-        Widget page;
+    return Consumer<AuthManager>(
+      builder: (ctx, authManager, child) {
+        return MaterialApp(
+          title: 'MyShop',
+          debugShowCheckedModeBanner: false,
+          theme: themeData,
+          home: authManager.isAuth
+              ? const SafeArea(child: ProductsOverviewScreen())
+              : FutureBuilder(
+                  future: authManager.tryAutoLogin(),
+                  builder: (ctx, snapshot) {
+                    return snapshot.connectionState == ConnectionState.waiting
+                        ? const SafeArea(child: SplashScreen())
+                        : const SafeArea(child: AuthScreen());
+                  },
+                ),
+          onGenerateRoute: (settings) {
+            Widget page;
 
-        switch (settings.name) {
-          case CartScreen.routeName:
-            page = const SafeArea(child: CartScreen());
-            break;
-          case OrdersScreen.routeName:
-            page = const SafeArea(child: OrdersScreen());
-            break;
-          case UserProductsScreen.routeName:
-            page = const SafeArea(child: UserProductsScreen());
-            break;
-          case ProductDetailScreen.routeName:
-            final productId = settings.arguments as String;
-            page = SafeArea(
-              child: Consumer<ProductsManager>(
-                builder: (context, productsManager, _) => ProductDetailScreen(
-                  productsManager.findById(productId)!,
-                ),
-              ),
-            );
-            return createRoute(page);
-          case EditProductScreen.routeName:
-            final productId = settings.arguments as String?;
-            page = SafeArea(
-              child: Consumer<ProductsManager>(
-                builder: (context, productsManager, _) => EditProductScreen(
-                  productId != null
-                      ? productsManager.findById(productId)
-                      : null,
-                ),
-              ),
-            );
-            return createRoute(page);
-          default:
-            return null;
-        }
-        return createRoute(page); // Apply slide transition
+            switch (settings.name) {
+              case CartScreen.routeName:
+                page = const SafeArea(child: CartScreen());
+                break;
+              case OrdersScreen.routeName:
+                page = const SafeArea(child: OrdersScreen());
+                break;
+              case UserProductsScreen.routeName:
+                page = const SafeArea(child: UserProductsScreen());
+                break;
+              case ProductDetailScreen.routeName:
+                final productId = settings.arguments as String;
+                page = SafeArea(
+                  child: Consumer<ProductsManager>(
+                    builder: (context, productsManager, _) =>
+                        ProductDetailScreen(
+                      productsManager.findById(productId)!,
+                    ),
+                  ),
+                );
+                return createRoute(page);
+              case EditProductScreen.routeName:
+                final productId = settings.arguments as String?;
+                page = SafeArea(
+                  child: Consumer<ProductsManager>(
+                    builder: (context, productsManager, _) => EditProductScreen(
+                      productId != null
+                          ? productsManager.findById(productId)
+                          : null,
+                    ),
+                  ),
+                );
+                return createRoute(page);
+              default:
+                return null;
+            }
+            return createRoute(page); // Apply slide transition
+          },
+        );
       },
     );
   }
