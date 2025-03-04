@@ -1,9 +1,12 @@
-import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 import 'ui/screens.dart';
 import 'ui/shared/navigation_utils.dart';
 
-void main() {
+Future<void> main() async {
+  await dotenv.load();
   runApp(
     MultiProvider(
       providers: [
