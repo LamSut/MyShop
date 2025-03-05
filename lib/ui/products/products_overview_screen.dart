@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import '../screens.dart';
+import 'package:provider/provider.dart';
 import 'products_grid.dart';
+import 'products_manager.dart';
+import '../cart/cart_screen.dart';
 import '../shared/app_drawer.dart';
 import '../shared/icon_utils.dart';
 
@@ -14,6 +16,13 @@ class ProductsOverviewScreen extends StatefulWidget {
 
 class ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   var _currentFilter = FilterOptions.all;
+  late Future<void> _fetchProducts;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchProducts = context.read<ProductsManager>().fetchProducts();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,8 +48,16 @@ class ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
       ),
       // Add Drawer
       drawer: const AppDrawer(),
-      body: ProductsGrid(
-        _currentFilter == FilterOptions.favorites,
+      body: FutureBuilder(
+        future: _fetchProducts,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return ProductsGrid(_currentFilter == FilterOptions.favorites);
+          }
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
       ),
     );
   }

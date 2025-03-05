@@ -4,7 +4,7 @@ import '../../services/products_service.dart';
 
 class ProductsManager with ChangeNotifier {
   final ProductsService _productsService = ProductsService();
-  final List<Product> _items = [];
+  List<Product> _items = [];
 
   int get itemCount {
     return _items.length;
@@ -24,6 +24,18 @@ class ProductsManager with ChangeNotifier {
     } catch (error) {
       return null;
     }
+  }
+
+  Future<void> fetchProducts() async {
+    _items = await _productsService.fetchProducts();
+    notifyListeners();
+  }
+
+  Future<void> fetchUserProducts() async {
+    _items = await _productsService.fetchProducts(
+      filteredByUser: true,
+    );
+    notifyListeners();
   }
 
   Future<void> addProduct(Product product) async {

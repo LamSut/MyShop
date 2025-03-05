@@ -57,7 +57,8 @@ class Product {
       id: json['id'],
       title: json['title'],
       description: json['description'],
-      price: json['price'],
+      price:
+          (json['price'] as num).toDouble(), // PocketBase x.0 = x (=> integer)
       isFavorite: json['isFavorite'] ?? false,
       imageUrl: json['imageUrl'] ?? '',
     );
