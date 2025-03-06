@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'products_grid.dart';
 import 'products_manager.dart';
+import '../cart/cart_manager.dart';
 import '../cart/cart_screen.dart';
 import '../shared/app_drawer.dart';
 import '../shared/icon_utils.dart';
@@ -10,18 +11,26 @@ enum FilterOptions { favorites, all }
 
 class ProductsOverviewScreen extends StatefulWidget {
   const ProductsOverviewScreen({super.key});
+
   @override
   State<ProductsOverviewScreen> createState() => ProductsOverviewScreenState();
 }
 
 class ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   var _currentFilter = FilterOptions.all;
-  late Future<void> _fetchProducts;
+  late Future<void> _fetchData;
 
   @override
   void initState() {
     super.initState();
-    _fetchProducts = context.read<ProductsManager>().fetchProducts();
+    _fetchData = _initializeData();
+  }
+
+  Future<void> _initializeData() async {
+    await Future.wait([
+      context.read<ProductsManager>().fetchProducts(),
+      context.read<CartManager>().fetchCartItems(),
+    ]);
   }
 
   @override
@@ -40,16 +49,14 @@ class ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
           ),
           ShoppingCartButton(
             onPressed: () {
-              // Go to CartScreen
               Navigator.of(context).pushNamed(CartScreen.routeName);
             },
           ),
         ],
       ),
-      // Add Drawer
       drawer: const AppDrawer(),
       body: FutureBuilder(
-        future: _fetchProducts,
+        future: _fetchData,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             return ProductsGrid(_currentFilter == FilterOptions.favorites);
