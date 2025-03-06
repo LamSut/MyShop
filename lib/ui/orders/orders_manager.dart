@@ -1,45 +1,43 @@
 import 'package:flutter/foundation.dart';
-
 import '../../models/cart_item.dart';
 import '../../models/order_item.dart';
+import '../../services/orders_service.dart';
 
 class OrdersManager with ChangeNotifier {
-  final List<OrderItem> _orders = [
-    OrderItem(
-      id: 'o1',
-      amount: 59.98,
-      products: [
-        CartItem(
-          id: 'ci1',
-          title: 'Red Shirt',
-          imageUrl:
-              'https://cdn.pixabay.com/photo/2016/10/02/22/17/red-t-shirt-1718578_1280.jpg',
-          price: 29.99,
-          quantity: 2,
-        ),
-      ],
-      dateTime: DateTime.now(),
-    ),
-  ];
+  final OrdersService _ordersService = OrdersService();
+  List<OrderItem> _orders = [];
 
-  int get orderCount {
-    return _orders.length;
-  }
+  int get orderCount => _orders.length;
+  List<OrderItem> get orders => [..._orders];
 
-  List<OrderItem> get orders {
-    return [..._orders];
+  Future<void> fetchOrders() async {
+    try {
+      final fetchedOrders = await _ordersService.fetchOrders();
+      _orders = fetchedOrders;
+      notifyListeners();
+    } catch (error) {
+      debugPrint('Error fetching orders: $error');
+    }
   }
 
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
-    _orders.insert(
-      0,
-      OrderItem(
-        id: 'o${DateTime.now().toIso8601String()}',
-        amount: total,
-        products: cartProducts,
-        dateTime: DateTime.now(),
-      ),
+    final newOrder = OrderItem(
+      id: null,
+      amount: total,
+      products: cartProducts,
+      dateTime: DateTime.now(),
     );
-    notifyListeners();
+
+    try {
+      final addedOrder = await _ordersService.addOrder(newOrder);
+      if (addedOrder != null) {
+        _orders.insert(0, addedOrder);
+        notifyListeners();
+      } else {
+        debugPrint('Failed to add order via the service.');
+      }
+    } catch (error) {
+      debugPrint('Error adding order: $error');
+    }
   }
 }
