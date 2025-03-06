@@ -8,61 +8,70 @@ import 'cart_item_card.dart';
 class CartScreen extends StatelessWidget {
   static const routeName = '/cart';
   const CartScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
-    final cart = context.watch<CartManager>();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Your Cart'),
       ),
-      body: Column(
-        children: <Widget>[
-          CartSummary(
-            cart: cart,
-            // Handle Order Now event
-            onOrderNowPressed: cart.totalAmount <= 0
-                ? null
-                : () {
-                    context.read<OrdersManager>().addOrder(
-                          cart.products,
-                          cart.totalAmount,
-                        );
-                    cart.clearAllItems();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Ordered successfully!'),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
-                  },
-          ),
-          const SizedBox(height: 10),
-          Expanded(
-            child: CartItemList(cart),
-          )
-        ],
+      body: FutureBuilder(
+        future: context.read<CartManager>().fetchCartItems(),
+        builder: (ctx, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else {
+            return Consumer<CartManager>(
+              builder: (ctx, cart, child) => Column(
+                children: <Widget>[
+                  CartSummary(
+                    cart: cart,
+                    onOrderNowPressed: cart.totalAmount <= 0
+                        ? null
+                        : () async {
+                            await context.read<OrdersManager>().addOrder(
+                                  cart.items,
+                                  cart.totalAmount,
+                                );
+                            await cart.clearAllItems();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Ordered successfully!'),
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                          },
+                  ),
+                  const SizedBox(height: 10),
+                  Expanded(
+                    child: CartItemList(cart),
+                  ),
+                ],
+              ),
+            );
+          }
+        },
       ),
     );
   }
 }
 
 class CartItemList extends StatelessWidget {
-  const CartItemList(
-    this.cart, {
-    super.key,
-  });
+  const CartItemList(this.cart, {super.key});
 
   final CartManager cart;
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: cart.productEntries
-          .map((entry) => CartItemCard(
-                productId: entry.key,
-                cartItem: entry.value,
-              ))
-          .toList(),
+    return ListView.builder(
+      itemCount: cart.itemCount,
+      itemBuilder: (ctx, index) {
+        final entry = cart.itemEntries.elementAt(index);
+        return CartItemCard(
+          productId: entry.key,
+          cartItem: entry.value,
+        );
+      },
     );
   }
 }
@@ -106,7 +115,7 @@ class CartSummary extends StatelessWidget {
                 ),
               ),
               child: const Text('ORDER NOW'),
-            )
+            ),
           ],
         ),
       ),

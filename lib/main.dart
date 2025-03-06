@@ -6,7 +6,9 @@ import 'ui/screens.dart';
 import 'ui/shared/navigation_utils.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load();
+
   runApp(
     MultiProvider(
       providers: [
